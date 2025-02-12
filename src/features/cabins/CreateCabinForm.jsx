@@ -9,42 +9,7 @@ import { useForm } from 'react-hook-form';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { createCabin } from '../../services/apiCabins';
 import toast from 'react-hot-toast';
-
-const FormRow = styled.div`
-  display: grid;
-  align-items: center;
-  grid-template-columns: 24rem 1fr 1.2fr;
-  gap: 2.4rem;
-
-  padding: 1.2rem 0;
-
-  &:first-child {
-    padding-top: 0;
-  }
-
-  &:last-child {
-    padding-bottom: 0;
-  }
-
-  &:not(:last-child) {
-    border-bottom: 1px solid var(--color-grey-100);
-  }
-
-  &:has(button) {
-    display: flex;
-    justify-content: flex-end;
-    gap: 1.2rem;
-  }
-`;
-
-const Label = styled.label`
-  font-weight: 500;
-`;
-
-const Error = styled.span`
-  font-size: 1.4rem;
-  color: var(--color-red-700);
-`;
+import FormRow from '../../ui/FormRow';
 
 function CreateCabinForm() {
   const { register, handleSubmit, reset, getValues, formState } = useForm();
@@ -64,8 +29,7 @@ function CreateCabinForm() {
   });
 
   function onSubmit(data) {
-    console.log(data);
-    mutate(data);
+    mutate({ ...data, image: data.image[0] });
   }
 
   function onError(errors) {
@@ -74,21 +38,17 @@ function CreateCabinForm() {
   }
   return (
     <Form onSubmit={handleSubmit(onSubmit, onError)}>
-      <FormRow>
-        <Label htmlFor='name'>Cabin name</Label>
+      <FormRow label={'Cabin name'} error={errors?.name?.message}>
         <Input
           type='text'
+          disabled={isCreating}
           id='name'
           {...register('name', { required: 'This field is required' })}
         />
-        {errors?.name?.message && (
-          <Error role='alert'>{errors?.name?.message}</Error>
-        )}
       </FormRow>
-
-      <FormRow>
-        <Label htmlFor='maxCapacity'>Maximum capacity</Label>
+      <FormRow label='Maximum capacity' error={errors?.max_capacity?.message}>
         <Input
+          disabled={isCreating}
           type='number'
           id='maxCapacity'
           {...register('max_capacity', {
@@ -99,14 +59,11 @@ function CreateCabinForm() {
             },
           })}
         />
-        {errors?.max_capacity?.message && (
-          <Error role='alert'>{errors?.max_capacity?.message}</Error>
-        )}
       </FormRow>
 
-      <FormRow>
-        <Label htmlFor='regularPrice'>Regular price</Label>
+      <FormRow label='Regular price' error={errors?.regular_price?.message}>
         <Input
+          disabled={isCreating}
           type='number'
           id='regularPrice'
           {...register('regular_price', {
@@ -117,14 +74,11 @@ function CreateCabinForm() {
             },
           })}
         />
-        {errors?.regular_price?.message && (
-          <Error role='alert'>{errors?.regular_price?.message}</Error>
-        )}
       </FormRow>
 
-      <FormRow>
-        <Label htmlFor='discount'>Discount</Label>
+      <FormRow label={'Discount'} error={errors?.discount?.message}>
         <Input
+          disabled={isCreating}
           type='number'
           id='discount'
           {...register('discount', {
@@ -136,38 +90,31 @@ function CreateCabinForm() {
           })}
           defaultValue={0}
         />
-        {errors?.discount?.message && (
-          <Error>{errors?.discount?.message}</Error>
-        )}
       </FormRow>
 
-      <FormRow>
-        <Label htmlFor='description'>Description for website</Label>
+      <FormRow
+        label='Description for website'
+        error={errors?.description?.message}
+      >
         <Textarea
           type='number'
+          disabled={isCreating}
           id='description'
           {...register('description', { required: 'This field is required' })}
           defaultValue=''
         />
-        {errors?.description?.message && (
-          <Error role='alert'>{errors?.description?.message}</Error>
-        )}
       </FormRow>
 
-      <FormRow>
-        <Label htmlFor='image'>Cabin photo</Label>
+      <FormRow label={'Cabin photo'} error={errors?.image?.message}>
         <FileInput
+          disabled={isCreating}
           id='image'
           {...register('image', { required: 'This field is required' })}
           accept='image/*'
         />
-        {errors?.image?.message && (
-          <Error role='alert'>{errors?.image?.message}</Error>
-        )}
       </FormRow>
 
-      <FormRow>
-        {/* type is an HTML attribute! */}
+      <FormRow label={'Cabin features'}>
         <Button variation='secondary' type='reset' disabled={isCreating}>
           Cancel
         </Button>
